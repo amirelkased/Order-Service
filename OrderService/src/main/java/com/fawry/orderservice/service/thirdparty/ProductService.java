@@ -1,5 +1,6 @@
 package com.fawry.orderservice.service.thirdparty;
 
+import com.fawry.orderservice.exception.ErrorResponse;
 import com.fawry.orderservice.exception.ProductServiceException;
 import com.fawry.orderservice.model.dto.OrderItemRequest;
 import com.fawry.orderservice.model.dto.ProductDto;
@@ -36,11 +37,11 @@ public class ProductService {
                 throw new ProductServiceException("No products found for the given skus");
             }
         } catch (HttpClientErrorException ex) {
-            ProductsWithPriceResponse response = ex.getResponseBodyAs(ProductsWithPriceResponse.class);
-            if (response != null){
-                log.error("Client error: {}", response.getMessage());
+            ErrorResponse errorResponse = ex.getResponseBodyAs(ErrorResponse.class);
+            if (errorResponse != null){
+                log.error("Client error: {}", ex.getMessage());
             }
-            throw new ProductServiceException("Error while retrieving products by skus %n %s".formatted(response.getMessage()));
+            throw new ProductServiceException("Error while retrieving products by skus : %s".formatted(errorResponse.getMessage()));
         }
     }
 }

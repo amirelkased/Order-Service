@@ -1,5 +1,6 @@
 package com.fawry.orderservice.exception;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class ErrorResponse implements Serializable {
     String path;
     int status;
     String message;
+    @JsonIgnoreProperties(ignoreUnknown = true)
     Map<String, String> errors;
 }
 

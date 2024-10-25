@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.time.Duration;
-
 @Configuration
 public class RabbitMQConfig {
     @Value("${rabbitmq.notification.queue}")
@@ -24,6 +22,10 @@ public class RabbitMQConfig {
     private String exchange;
     @Value("${rabbitmq.notification.routing.key}")
     private String notificationRoutingKey;
+    @Value("${rabbitmq.retry.template.maxAttemps}")
+    private int retryMaxAttemps;
+    @Value("${rabbitmq.retry.template.backoff.milliseconds}")
+    private long retryBackoff;
 
     @Bean
     public Queue notificationQueue() {
@@ -57,8 +59,8 @@ public class RabbitMQConfig {
     @Bean
     public RetryTemplate retryTemplate(){
         return RetryTemplate.builder()
-                .maxAttempts(3)
-                .fixedBackoff(Duration.ofMinutes(1))
+                .maxAttempts(retryMaxAttemps)
+                .fixedBackoff(retryBackoff)
                 .retryOn(AmqpException.class)
                 .build();
     }

@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class CouponService {
-    public static final String BASE_URL = "http://localhost:8080/api/v1/coupons/consume";
+    private static final String BASE_URL = "http://localhost:8081/api/v1/coupons/consume";
     private final RestTemplate restTemplate = new RestTemplate();
 
 

@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StoreService {
-    public static final String BASE_URL = "http://localhost:8080/api/v1/store/stocks";
+    private static final String BASE_URL = "http://localhost:8081/api/v1/store/stocks";
     private final RestTemplate restTemplate = new RestTemplate();
 
     public void consumeStock(List<OrderItem> orderItems) {

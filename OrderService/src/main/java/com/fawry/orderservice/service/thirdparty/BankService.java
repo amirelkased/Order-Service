@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class BankService {
-    public static final String BASE_URL = "http://localhost:8080/api/v1/bank";
+    private static final String BASE_URL = "http://localhost:8081/api/v1/bank";
     private final RestTemplate restTemplate = new RestTemplate();
 
     public TransactionResponse withdraw(Long customerId, double amount) {
