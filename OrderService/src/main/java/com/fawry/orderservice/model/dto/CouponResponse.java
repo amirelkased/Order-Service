@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CouponResponse {
-    private boolean status;
+    private String status;
+    private String message;
     @JsonIgnoreProperties(ignoreUnknown = true)
     private double amount;
 }

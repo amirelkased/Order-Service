@@ -2,6 +2,7 @@ package com.fawry.orderservice.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.amqp.AmqpConnectException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -71,6 +73,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
+    @ExceptionHandler(ProductServiceException.class)
+    public ResponseEntity<ErrorResponse> handleOutOfStockException(@NotNull ProductServiceException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
     @ExceptionHandler(PaymentFailedException.class)
     public ResponseEntity<ErrorResponse> handlePaymentFailedException(@NotNull PaymentFailedException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
@@ -86,6 +93,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(@NotNull Exception exp, HttpServletRequest request) {
         String errorMessage = "An unexpected error occurred. Please try again later.";
         errorMessage = errorMessage.concat(exp.getMessage());
+        log.error(exp.getCause().toString());
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, request);
     }
 

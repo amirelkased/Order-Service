@@ -6,11 +6,14 @@ import com.fawry.orderservice.model.Order;
 import com.fawry.orderservice.model.OrderItem;
 import com.fawry.orderservice.model.OrderStatus;
 import com.fawry.orderservice.model.dto.CreateOrderRequest;
+import com.fawry.orderservice.model.dto.NotificationRequest;
 import com.fawry.orderservice.model.dto.OrderItemRequest;
 import com.fawry.orderservice.model.dto.ProductDto;
 import com.fawry.orderservice.repository.OrderRepository;
+import com.fawry.orderservice.service.thirdparty.NotificationService;
 import com.fawry.orderservice.service.thirdparty.ProductService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +35,12 @@ public class OrderService {
     private Long merchantId;
     private final OrderRepository orderRepository;
     private final ProductService productService;
+    private final NotificationService notificationService;
     private final ResponsePageMapper pageMapper;
-    private final OrderRabbitService orderRabbitService;
-    private final OrderSagaCoordinator orderSagaCoordinator;
+    private final OrderCoordinator orderCoordinator;
 
-    public void createOrder(@NotNull CreateOrderRequest request) {
+    @Transactional
+    public Order createOrder(@NotNull CreateOrderRequest request) {
         List<OrderItem> orderItems = mapToOrderItems(request.getOrderItems());
 
         Order order = new Order();
@@ -47,32 +51,42 @@ public class OrderService {
         order.setTotalAmount(calculateTotalAmount(orderItems));
         order.setOrderStatus(OrderStatus.PENDING);
 
-        Order savedOrder = orderRepository.save(order);
-        log.info("This is initial order and sended to queue -> {}", savedOrder);
-        orderRabbitService.sendOrderToQueue(savedOrder);
+        log.info("This is initial order -> {}", order);
+        order = orderCoordinator.processOrder(order);
+
+        Order savedOrder =  orderRepository.save(order);
+        sendOrderNotification(savedOrder);
+        return savedOrder;
+    }
+
+    private void sendOrderNotification(Order savedOrder) {
+        NotificationRequest notificationRequest = NotificationRequest.builder()
+                .order(savedOrder)
+                .build();
+        notificationService.sendOrderNotification(notificationRequest);
     }
 
     private List<OrderItem> mapToOrderItems(List<OrderItemRequest> orderItemRequests) {
         List<ProductDto> products = productService.getProductsBySkus(orderItemRequests);
         // Map the order items and associate them with their prices
         return orderItemRequests.stream()
-                            .map(item -> {
-                                ProductDto product = products.stream()
-                                                          .filter(p -> p.getSku().equals(item.getProductSku()))
-                                                          .findFirst()
-                                                          .orElseThrow(
-                                                                  () -> new EntityNotFoundException(
-                                                                          "No Product With Sku %s".formatted(item.getProductSku())
-                                                                  )
-                                                          );
+                .map(item -> {
+                    ProductDto product = products.stream()
+                            .filter(p -> p.getSku().equals(item.getProductSku()))
+                            .findFirst()
+                            .orElseThrow(
+                                    () -> new EntityNotFoundException(
+                                            "No Product With Sku %s".formatted(item.getProductSku())
+                                    )
+                            );
 
-                                OrderItem orderItem = new OrderItem();
-                                orderItem.setProductSku(item.getProductSku());
-                                orderItem.setPrice(product.getPrice());
-                                orderItem.setQuantity(item.getQuantity());
-                                return orderItem;
-                            })
-                            .toList();
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setProductSku(item.getProductSku());
+                    orderItem.setPrice(product.getPrice());
+                    orderItem.setQuantity(item.getQuantity());
+                    return orderItem;
+                })
+                .toList();
     }
 
     private double calculateTotalAmount(@NotNull List<OrderItem> orderItems) {

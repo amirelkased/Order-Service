@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.time.LocalDate;
 
 @RestController
@@ -33,7 +32,8 @@ public class OrderRestController {
     public ResponseEntity<Order> createOrder(
             @RequestBody CreateOrderRequest orderRequest
             ){
-          orderService.createOrder(orderRequest);
-        return ResponseEntity.created(URI.create("api/v1/orders/"+orderRequest.getCustomerId())).build();
+        return ResponseEntity.ok(
+                orderService.createOrder(orderRequest)
+        );
     }
 }

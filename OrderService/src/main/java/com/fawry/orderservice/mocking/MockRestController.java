@@ -27,78 +27,89 @@ public class MockRestController {
     public ResponseEntity<TransactionResponse> withdraw(@RequestBody TransactionRequest transactionRequest) {
         // happy
         log.info("Bank API: withdraw from {} amount {}", transactionRequest.getUserId(), transactionRequest.getAmount());
-//        return ResponseEntity.ok(
-//                TransactionResponse.builder()
-//                        .status(true)
-//                        .transactionId(UUID.randomUUID().toString())
-//                        .build()
-//        );
-        // sad
-        return ResponseEntity.badRequest().body(
+        return ResponseEntity.ok(
                 TransactionResponse.builder()
-                        .status(false)
-//                        .transactionId(UUID.randomUUID().toString())
+                        .status("success")
+                        .message("withdraw success")
+                        .transactionId(UUID.randomUUID().toString())
                         .build()
         );
+        // sad
+//        return ResponseEntity.badRequest().body(
+//                TransactionResponse.builder()
+//                        .status("failed")
+//                        .message("Customer haven't sufficient amount!")
+////                        .transactionId(UUID.randomUUID().toString())
+//                        .build()
+//        );
     }
 
     @PostMapping("bank/deposit")
     public ResponseEntity<TransactionResponse> deposit(@RequestBody TransactionRequest transactionRequest) {
         log.info("Bank API: deposit to {} amount {}", transactionRequest.getUserId(), transactionRequest.getAmount());
 
-        // happy
-        return ResponseEntity.badRequest().body(
+        return ResponseEntity.ok(
                 TransactionResponse.builder()
-                        .status(true)
+                        .status("success")
+                        .message("deposit success")
                         .transactionId(UUID.randomUUID().toString())
                         .build()
         );
         // sad
-//        return ResponseEntity.ok(
+//        return ResponseEntity.badRequest().body(
 //                TransactionResponse.builder()
-//                        .status(false)
+//                        .status("failed")
+//                        .message("Deposit failed!")
 ////                        .transactionId(UUID.randomUUID().toString())
 //                        .build()
 //        );
     }
 
     @PostMapping("products/skus")
-    public ResponseEntity<ProductDto[]> getProductsAlongPrices(@RequestBody List<String> skus){
+    public ResponseEntity<ProductsWithPriceResponse> getProductsAlongPrices(@RequestBody List<String> skus) {
         log.info("Request Skus and return along prices {}", skus);
         return ResponseEntity.ok(
-                skus.stream().map(
+                ProductsWithPriceResponse.builder()
+                        .status("success")
+                        .productDtos(skus.stream().map(
                         sku -> ProductDto.builder().price(RANDOM.nextDouble()).sku(sku).build()
-                ).toArray(ProductDto[]::new)
+                ).toList())
+                        .build()
         );
+//        ProductsWithPriceResponse response = new ProductsWithPriceResponse();
+//        response.setStatus("failed");
+//        response.setMessage("Their skus not correct");
+//        return ResponseEntity.badRequest().body(
+//                response
+//        );
     }
 
     @PostMapping("coupons/consume")
-    public ResponseEntity<CouponResponse> consumeCoupon(@RequestBody CouponRequest couponRequest){
+    public ResponseEntity<CouponResponse> consumeCoupon(@RequestBody CouponRequest couponRequest) {
         log.info("Mock Coupon consume api with couponCode {} and amount {}", couponRequest.getCouponCode(), couponRequest.getAmount());
         // happy
         return ResponseEntity.ok(
                 CouponResponse.builder()
-                        .status(true)
+                        .status("success")
+                        .message("Coupon valid")
                         .amount(couponRequest.getAmount() - (couponRequest.getAmount()*.10))
                         .build()
         );
         // sad
+//        CouponResponse coupon = new CouponResponse();
+//        coupon.setStatus("failed");
+//        coupon.setMessage("coupon is invalidate");
 //        return ResponseEntity.badRequest().body(
-//                CouponResponse.builder()
-//                        .status(false)
-//                        .amount(couponRequest.getAmount())
-//                        .build()
+//                coupon
 //        );
     }
 
     @PostMapping("store/stocks")
-    public ResponseEntity<Void> consumeProducts(@RequestBody List<OrderItem> orderItems){
+    public ResponseEntity<Void> consumeProducts(@RequestBody List<OrderItem> orderItems) {
         log.info("Mocking consuming order's products -> {}", orderItems);
         // happy
         return ResponseEntity.ok().build();
         //sad
 //        return ResponseEntity.badRequest().build();
     }
-
-
 }

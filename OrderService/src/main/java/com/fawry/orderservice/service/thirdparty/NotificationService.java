@@ -1,6 +1,6 @@
 package com.fawry.orderservice.service.thirdparty;
 
-import com.fawry.orderservice.model.Order;
+import com.fawry.orderservice.model.dto.NotificationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ public class NotificationService {
     private String notificationRoutingKey;
     private final RabbitTemplate rabbitTemplate;
 
-    public void sendOrderNotification(Order order) {
-        rabbitTemplate.convertAndSend(exchange, notificationRoutingKey, order);
+    public void sendOrderNotification(NotificationRequest notificationRequest) {
+        rabbitTemplate.convertAndSend(exchange, notificationRoutingKey, notificationRequest);
     }
 }

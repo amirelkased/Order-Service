@@ -12,8 +12,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductDto {
-    private String sku;
-    private double price;
+public class ProductsWithPriceResponse {
+    private String status;
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private String message;
+    private List<ProductDto> productDtos;
 }
-
