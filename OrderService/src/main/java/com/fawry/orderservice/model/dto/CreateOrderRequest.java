@@ -1,5 +1,6 @@
 package com.fawry.orderservice.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,6 @@ import java.util.List;
 public class CreateOrderRequest {
     private Long customerId;
     private String couponCode;
-    private List<OrderItemRequest> orderItems;
+    @JsonProperty(value = "orderItems")
+    private List<OrderItemRequest> orderItemRequestList;
 }

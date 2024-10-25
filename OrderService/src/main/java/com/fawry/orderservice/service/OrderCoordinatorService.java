@@ -2,25 +2,75 @@ package com.fawry.orderservice.service;
 
 
 import com.fawry.orderservice.model.Order;
+import com.fawry.orderservice.model.OrderItem;
 import com.fawry.orderservice.model.OrderStatus;
 import com.fawry.orderservice.model.PaymentStatus;
-import com.fawry.orderservice.model.dto.CouponResponse;
-import com.fawry.orderservice.model.dto.TransactionResponse;
-import com.fawry.orderservice.service.thirdparty.BankService;
-import com.fawry.orderservice.service.thirdparty.CouponService;
-import com.fawry.orderservice.service.thirdparty.StoreService;
+import com.fawry.orderservice.model.dto.*;
+import com.fawry.orderservice.repository.OrderRepository;
+import com.fawry.orderservice.service.thirdparty.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static com.fawry.orderservice.model.mapper.OrderItemsMapper.mapToOrderItems;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrderCoordinator {
+public class OrderCoordinatorService {
+    @Value("${order.merchant.id}")
+    private Long merchantId;
     private final CouponService couponService;
     private final StoreService storeService;
     private final BankService bankService;
+    private final ProductService productService;
+    private final NotificationService notificationService;
+    private final OrderRepository orderRepository;
+
+
+    @Transactional
+    public Order createOrder(@NotNull CreateOrderRequest request) {
+        log.info("Order products: {}", request.getOrderItemRequestList());
+        Order order = prepareOrderFromRequest(request);
+
+        log.info("This is initial order -> {}", order);
+        order = processOrder(order);
+
+        Order savedOrder =  orderRepository.save(order);
+
+        notificationService.sendOrderNotification(savedOrder);
+        return savedOrder;
+    }
+
+    private @NotNull Order prepareOrderFromRequest(@NotNull CreateOrderRequest request) {
+        List<ProductDto> productsDtos = getOrderProductsWithPrices(request.getOrderItemRequestList());
+        List<OrderItem> orderItems = mapToOrderItems(request.getOrderItemRequestList(), productsDtos);
+
+        Order order = new Order();
+        order.setMerchant(merchantId);
+        order.setCustomerId(request.getCustomerId());
+        order.setCouponCode(request.getCouponCode());
+        order.setOrderItems(orderItems);
+        order.setTotalAmount(calculateTotalAmount(orderItems));
+        order.setOrderStatus(OrderStatus.PENDING);
+
+        return order;
+    }
+
+    private List<ProductDto> getOrderProductsWithPrices(List<OrderItemRequest> orderItems) {
+        return productService.getProductsBySkus(orderItems);
+    }
+
+    private double calculateTotalAmount(@NotNull List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
 
 
     public Order processOrder(Order order) {

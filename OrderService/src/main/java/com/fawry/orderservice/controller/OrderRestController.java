@@ -3,6 +3,7 @@ package com.fawry.orderservice.controller;
 import com.fawry.orderservice.common.ResponsePage;
 import com.fawry.orderservice.model.Order;
 import com.fawry.orderservice.model.dto.CreateOrderRequest;
+import com.fawry.orderservice.service.OrderCoordinatorService;
 import com.fawry.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class OrderRestController {
     private final OrderService orderService;
+    private final OrderCoordinatorService orderCoordinatorService;
 
     @GetMapping("{customer}")
     public ResponseEntity<ResponsePage<Order>> getAllOrders(
@@ -33,7 +35,7 @@ public class OrderRestController {
             @RequestBody CreateOrderRequest orderRequest
             ){
         return ResponseEntity.ok(
-                orderService.createOrder(orderRequest)
+                orderCoordinatorService.createOrder(orderRequest)
         );
     }
 }

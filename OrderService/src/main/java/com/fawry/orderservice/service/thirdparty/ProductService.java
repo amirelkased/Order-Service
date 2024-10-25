@@ -6,6 +6,7 @@ import com.fawry.orderservice.model.dto.ProductDto;
 import com.fawry.orderservice.model.dto.ProductsWithPriceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,7 +21,7 @@ public class ProductService {
     private static final String BASE_URL = "http://localhost:8080/api/v1/products/skus";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public List<ProductDto> getProductsBySkus(List<OrderItemRequest> orderItemList) {
+    public List<ProductDto> getProductsBySkus(@NotNull List<OrderItemRequest> orderItemList) {
         List<String> skus = orderItemList.stream().map(OrderItemRequest::getProductSku).toList();
         try {
             ResponseEntity<ProductsWithPriceResponse> responseEntity = restTemplate.postForEntity(
