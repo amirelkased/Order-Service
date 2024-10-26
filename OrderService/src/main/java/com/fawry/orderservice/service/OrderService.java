@@ -6,6 +6,7 @@ import com.fawry.orderservice.model.Order;
 import com.fawry.orderservice.repository.OrderRepository;
 import com.fawry.orderservice.service.thirdparty.NotificationService;
 import com.fawry.orderservice.service.thirdparty.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,12 @@ public class OrderService {
         LocalDateTime endDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDateTime.MAX;
         Page<Order> result = orderRepository.findAllOrdersBetweenRangeDates(pageable, customerId, startDateTime, endDateTime);
         return pageMapper.toResponsePage(result);
+    }
+
+    public Order getOrderById(Long customerId, Long orderId) {
+        return orderRepository.findOrderByIdAndCustomerId(orderId, customerId).orElseThrow(
+                () -> new EntityNotFoundException("No Order by Id %d for customer %d".formatted(orderId, customerId))
+        );
     }
 }
 

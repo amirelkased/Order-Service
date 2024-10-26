@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -24,4 +25,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                Long customerId,
                                                @Param("from") LocalDateTime from,
                                                @Param("to") LocalDateTime to);
+
+    Optional<Order> findOrderByIdAndCustomerId(Long orderId, Long customerId);
 }

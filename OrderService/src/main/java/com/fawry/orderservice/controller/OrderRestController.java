@@ -30,6 +30,14 @@ public class OrderRestController {
         );
     }
 
+    @GetMapping("{customerId}/{orderId}")
+    public ResponseEntity<Order> getOrder(
+            @PathVariable Long customerId, @PathVariable Long orderId){
+        return ResponseEntity.ok(
+          orderService.getOrderById(customerId, orderId)
+        );
+    }
+
     @PostMapping("")
     public ResponseEntity<Order> createOrder(
             @RequestBody CreateOrderRequest orderRequest
