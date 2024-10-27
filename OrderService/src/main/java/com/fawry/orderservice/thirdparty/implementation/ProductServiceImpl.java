@@ -1,10 +1,11 @@
-package com.fawry.orderservice.service.thirdparty;
+package com.fawry.orderservice.thirdparty.implementation;
 
 import com.fawry.orderservice.exception.ErrorResponse;
 import com.fawry.orderservice.exception.ProductServiceException;
 import com.fawry.orderservice.model.dto.OrderItemRequest;
 import com.fawry.orderservice.model.dto.ProductDto;
 import com.fawry.orderservice.model.dto.ProductsWithPriceResponse;
+import com.fawry.orderservice.thirdparty.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -18,10 +19,11 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ProductService {
-    private static final String BASE_URL = "http://localhost:8080/api/v1/products/skus";
+public class ProductServiceImpl implements ProductService {
+    private static final String BASE_URL = "http://localhost:8081/api/v1/products/skus";
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Override
     public List<ProductDto> getProductsBySkus(@NotNull List<OrderItemRequest> orderItemList) {
         List<String> skus = orderItemList.stream().map(OrderItemRequest::getProductSku).toList();
         try {
@@ -38,7 +40,7 @@ public class ProductService {
             }
         } catch (HttpClientErrorException ex) {
             ErrorResponse errorResponse = ex.getResponseBodyAs(ErrorResponse.class);
-            if (errorResponse != null){
+            if (errorResponse != null) {
                 log.error("Client error: {}", ex.getMessage());
             }
             throw new ProductServiceException("Error while retrieving products by skus : %s".formatted(errorResponse.getMessage()));

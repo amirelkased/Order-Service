@@ -1,7 +1,6 @@
 package com.fawry.orderservice.mocking;
 
 
-import com.fawry.orderservice.model.OrderItem;
 import com.fawry.orderservice.model.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +71,8 @@ public class MockRestController {
                 ProductsWithPriceResponse.builder()
                         .status("success")
                         .productDtos(skus.stream().map(
-                        sku -> ProductDto.builder().price(RANDOM.nextDouble()).sku(sku).build()
-                ).toList())
+                                sku -> ProductDto.builder().price(RANDOM.nextDouble()).sku(sku).build()
+                        ).toList())
                         .build()
         );
 //        ProductsWithPriceResponse response = new ProductsWithPriceResponse();
@@ -92,7 +91,7 @@ public class MockRestController {
                 CouponResponse.builder()
                         .status("success")
                         .message("Coupon valid")
-                        .amount(couponRequest.getAmount() - (couponRequest.getAmount()*.10))
+                        .amount(couponRequest.getAmount() - (couponRequest.getAmount() * .10))
                         .build()
         );
         // sad
@@ -105,7 +104,7 @@ public class MockRestController {
     }
 
     @PostMapping("store/stocks")
-    public ResponseEntity<Void> consumeProducts(@RequestBody List<OrderItem> orderItems) {
+    public ResponseEntity<Void> consumeProducts(@RequestBody List<StockRequest> orderItems) {
         log.info("Mocking consuming order's products -> {}", orderItems);
         // happy
         return ResponseEntity.ok().build();

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ResponsePageMapper {
 
-    public <T> ResponsePage<T> toResponsePage(Page<T> pageResult){
+    public <T> ResponsePage<T> toResponsePage(Page<T> pageResult) {
         return ResponsePage.<T>builder()
                 .data(pageResult.getContent())
                 .totalElements(pageResult.getTotalElements())

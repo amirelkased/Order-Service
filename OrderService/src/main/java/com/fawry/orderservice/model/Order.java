@@ -28,7 +28,7 @@ public class Order extends BaseEntity {
     private boolean couponApplied;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn( name = "order_id", updatable = false, nullable = false)
+    @JoinColumn(name = "order_id", updatable = false, nullable = false)
     @ToString.Exclude
     private List<OrderItem> orderItems;
 

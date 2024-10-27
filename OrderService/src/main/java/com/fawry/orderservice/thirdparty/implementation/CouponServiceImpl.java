@@ -1,8 +1,9 @@
-package com.fawry.orderservice.service.thirdparty;
+package com.fawry.orderservice.thirdparty.implementation;
 
 import com.fawry.orderservice.exception.CouponInvalidException;
 import com.fawry.orderservice.model.dto.CouponRequest;
 import com.fawry.orderservice.model.dto.CouponResponse;
+import com.fawry.orderservice.thirdparty.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,11 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CouponService {
+public class CouponServiceImpl implements CouponService {
     private static final String BASE_URL = "http://localhost:8081/api/v1/coupons/consume";
     private final RestTemplate restTemplate = new RestTemplate();
 
-
+    @Override
     public CouponResponse consumeCoupon(String couponCode, double amount) {
         CouponRequest couponRequest = CouponRequest.builder()
                 .couponCode(couponCode)

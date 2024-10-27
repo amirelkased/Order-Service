@@ -1,0 +1,32 @@
+###
+POST http://localhost:8081/api/v1/orders
+Content-Type: application/json
+
+{
+  "customerId": 1900119,
+  "couponCode": "localhost",
+  "orderItems": [
+    {
+      "productSku": "RCH45Q1A",
+      "quantity": 10
+    },
+    {
+      "productSku": "MVCFH27F",
+      "quantity": 20
+    },{
+      "productSku": "9EN8WLT2",
+      "quantity": 30
+    }
+  ]
+}
+
+###
+@customerId=1900119
+@orderId=1
+GET http://localhost:8081/api/v1/orders/{{customerId}}/{{orderId}}
+
+###
+GET http://localhost:8081/api/v1/orders/{{customerId}}
+    ?
+    from=1970-01-01&
+    to=2024-10-27

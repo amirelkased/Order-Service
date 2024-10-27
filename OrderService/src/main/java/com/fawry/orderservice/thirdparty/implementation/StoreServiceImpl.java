@@ -1,7 +1,8 @@
-package com.fawry.orderservice.service.thirdparty;
+package com.fawry.orderservice.thirdparty.implementation;
 
 import com.fawry.orderservice.exception.OutOfStockException;
-import com.fawry.orderservice.model.OrderItem;
+import com.fawry.orderservice.model.dto.StockRequest;
+import com.fawry.orderservice.thirdparty.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -15,13 +16,14 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StoreService {
+public class StoreServiceImpl implements StoreService {
     private static final String BASE_URL = "http://localhost:8081/api/v1/store/stocks";
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public void consumeStock(List<OrderItem> orderItems) {
+    @Override
+    public void consumeStock(List<StockRequest> stockRequestList) {
         try {
-            ResponseEntity<Void> response = restTemplate.postForEntity(BASE_URL, orderItems, Void.class);
+            ResponseEntity<Void> response = restTemplate.postForEntity(BASE_URL, stockRequestList, Void.class);
 
             if (response.getStatusCode() == HttpStatus.OK) {
                 log.info("Stock consumed successfully for all items.");
@@ -30,7 +32,7 @@ public class StoreService {
             }
         } catch (HttpClientErrorException e) {
             log.error("One or more products are out of stock. Details:");
-            orderItems.forEach(item -> log.error("Product SKU: {}, Quantity: {}", item.getProductSku(), item.getQuantity()));
+            stockRequestList.forEach(item -> log.error("Product SKU: {}, Quantity: {}", item.getProductSku(), item.getQuantity()));
             throw new OutOfStockException("One or more products are out of stock.");
         }
     }

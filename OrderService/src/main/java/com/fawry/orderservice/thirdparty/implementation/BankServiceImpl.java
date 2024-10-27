@@ -1,8 +1,9 @@
-package com.fawry.orderservice.service.thirdparty;
+package com.fawry.orderservice.thirdparty.implementation;
 
 import com.fawry.orderservice.exception.PaymentFailedException;
 import com.fawry.orderservice.model.dto.TransactionRequest;
 import com.fawry.orderservice.model.dto.TransactionResponse;
+import com.fawry.orderservice.thirdparty.BankService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,11 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BankService {
+public class BankServiceImpl implements BankService {
     private static final String BASE_URL = "http://localhost:8081/api/v1/bank";
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Override
     public TransactionResponse withdraw(Long customerId, double amount) {
         TransactionRequest transactionRequest = prepareRequestPayload(customerId, amount);
 
@@ -36,6 +38,7 @@ public class BankService {
         }
     }
 
+    @Override
     public TransactionResponse deposit(Long merchantId, double amount) {
         TransactionRequest transactionRequest = prepareRequestPayload(merchantId, amount);
         try {

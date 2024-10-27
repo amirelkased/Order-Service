@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponsePage <T>{
+public class ResponsePage<T> {
     private List<T> data;
     private Long totalElements;
     private int totalPages;

@@ -57,7 +57,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RetryTemplate retryTemplate(){
+    public RetryTemplate retryTemplate() {
         return RetryTemplate.builder()
                 .maxAttempts(retryMaxAttemps)
                 .fixedBackoff(retryBackoff)
