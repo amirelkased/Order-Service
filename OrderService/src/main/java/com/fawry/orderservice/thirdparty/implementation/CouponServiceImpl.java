@@ -6,6 +6,7 @@ import com.fawry.orderservice.model.dto.CouponResponse;
 import com.fawry.orderservice.thirdparty.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -15,7 +16,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class CouponServiceImpl implements CouponService {
-    private static final String BASE_URL = "http://localhost:8081/api/v1/coupons/consume";
+    @Value("${coupon.api.url}")
+    private String BASE_URL;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override

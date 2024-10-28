@@ -9,6 +9,7 @@ import com.fawry.orderservice.thirdparty.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,7 +21,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
-    private static final String BASE_URL = "http://localhost:8081/api/v1/products/skus";
+    @Value("${product.api.url}")
+    private String BASE_URL;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override

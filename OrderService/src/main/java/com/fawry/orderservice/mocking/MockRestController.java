@@ -17,19 +17,19 @@ import java.util.UUID;
 
 @RestController
 @Slf4j
-@RequestMapping("api/v1")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class MockRestController {
     public static final Random RANDOM = new SecureRandom();
 
-    @PostMapping("bank/withdraw")
+    @PostMapping("api/v1/banking/transaction/withdraw")
     public ResponseEntity<TransactionResponse> withdraw(@RequestBody TransactionRequest transactionRequest) {
         // happy
         log.info("Bank API: withdraw from {} amount {}", transactionRequest.getUserId(), transactionRequest.getAmount());
         return ResponseEntity.ok(
                 TransactionResponse.builder()
                         .status("success")
-                        .message("withdraw success")
+                        .message("MOCKING: withdraw success")
                         .transactionId(UUID.randomUUID().toString())
                         .build()
         );
@@ -43,14 +43,14 @@ public class MockRestController {
 //        );
     }
 
-    @PostMapping("bank/deposit")
+    @PostMapping("api/v1/banking/transaction/deposit")
     public ResponseEntity<TransactionResponse> deposit(@RequestBody TransactionRequest transactionRequest) {
         log.info("Bank API: deposit to {} amount {}", transactionRequest.getUserId(), transactionRequest.getAmount());
 
         return ResponseEntity.ok(
                 TransactionResponse.builder()
                         .status("success")
-                        .message("deposit success")
+                        .message("MOCKING: deposit success")
                         .transactionId(UUID.randomUUID().toString())
                         .build()
         );
@@ -64,12 +64,13 @@ public class MockRestController {
 //        );
     }
 
-    @PostMapping("products/skus")
+    @PostMapping("api/v1/products/skus")
     public ResponseEntity<ProductsWithPriceResponse> getProductsAlongPrices(@RequestBody List<String> skus) {
         log.info("Request Skus and return along prices {}", skus);
         return ResponseEntity.ok(
                 ProductsWithPriceResponse.builder()
                         .status("success")
+                        .message("MOCKING: map products with prices")
                         .productDtos(skus.stream().map(
                                 sku -> ProductDto.builder().price(RANDOM.nextDouble()).sku(sku).build()
                         ).toList())
@@ -83,14 +84,14 @@ public class MockRestController {
 //        );
     }
 
-    @PostMapping("coupons/consume")
+    @PostMapping("coupon/consume")
     public ResponseEntity<CouponResponse> consumeCoupon(@RequestBody CouponRequest couponRequest) {
         log.info("Mock Coupon consume api with couponCode {} and amount {}", couponRequest.getCouponCode(), couponRequest.getAmount());
         // happy
         return ResponseEntity.ok(
                 CouponResponse.builder()
                         .status("success")
-                        .message("Coupon valid")
+                        .message("MOCKING: Coupon valid")
                         .amount(couponRequest.getAmount() - (couponRequest.getAmount() * .10))
                         .build()
         );
@@ -103,7 +104,7 @@ public class MockRestController {
 //        );
     }
 
-    @PostMapping("store/stocks")
+    @PostMapping("stocks/consume")
     public ResponseEntity<Void> consumeProducts(@RequestBody List<StockRequest> orderItems) {
         log.info("Mocking consuming order's products -> {}", orderItems);
         // happy

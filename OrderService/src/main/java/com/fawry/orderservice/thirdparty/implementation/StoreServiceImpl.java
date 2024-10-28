@@ -5,6 +5,7 @@ import com.fawry.orderservice.model.dto.StockRequest;
 import com.fawry.orderservice.thirdparty.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImpl implements StoreService {
-    private static final String BASE_URL = "http://localhost:8081/api/v1/store/stocks";
+    @Value("${store.api.url}")
+    private String BASE_URL;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override

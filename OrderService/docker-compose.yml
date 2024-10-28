@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  mysql-service:
+    restart: always
+    image: mysql
+    container_name: mysql-server
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  rabbit-service:
+    container_name: rabbitmq-server
+    image: rabbitmq:4.0.2-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  order-service:
+    restart: always
+    container_name: order-server
+    image: amirelkased/order_service:v1.0
+    depends_on:
+      - mysql-service
+      - rabbit-service
+      - product-service
+      - coupon-service
+      - store-service
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: mysql-server
+      RABBITMQ_HOST: rabbitmq-server
+      BANK_HOST: order-server
+      COUPON_HOST: coupon-server
+      STORE_HOST: store-server
+      PRODUCT_HOST: product-server
+
+  product-service:
+    restart: always
+    container_name: product-server
+    image: amirelkased/product_service:v1.0
+    depends_on:
+      - mysql-service
+      - rabbit-service
+    ports:
+      - "8081:8080"
+    environment:
+      MYSQL_HOST: mysql-server
+      RABBITMQ_HOST: rabbitmq-server
+
+  coupon-service:
+    restart: always
+    container_name: coupon-server
+    image: yassen7/coupon_service:v1.0
+    depends_on:
+      - mysql-service
+    ports:
+      - "8082:8080"
+    environment:
+      MYSQL_HOST: mysql-server
+
+  store-service:
+    restart: always
+    container_name: store-server
+    image: amirelkased/store_service:v2.0
+    depends_on:
+      - mysql-service
+      - rabbit-service
+    ports:
+      - "8083:8080"
+    environment:
+      MYSQL_HOST: mysql-server
+      RABBITMQ_HOST: rabbitmq-server
+
+volumes:
+  mysql-data:

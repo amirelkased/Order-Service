@@ -49,8 +49,8 @@ public class OrderServiceImpl implements OrderService {
             Page<Order> result = orderRepository.findOrdersByCustomerId(pageable, customerId);
             return pageMapper.toResponsePage(result);
         }
-        LocalDateTime startDateTime = (from != null) ? from.atStartOfDay() : LocalDateTime.MIN;
-        LocalDateTime endDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDateTime.MAX;
+        LocalDateTime startDateTime = (from != null) ? from.atStartOfDay() : LocalDateTime.of(LocalDate.of(1970, 1,1), LocalTime.MIN);
+        LocalDateTime endDateTime = (to != null) ? to.atTime(LocalTime.MAX) : LocalDateTime.now();
         Page<Order> result = orderRepository.findAllOrdersBetweenRangeDates(pageable, customerId, startDateTime, endDateTime);
         return pageMapper.toResponsePage(result);
     }
