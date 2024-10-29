@@ -78,5 +78,4 @@ public class BankServiceImpl implements BankService {
                 .amount(amount + tax)
                 .build();
     }
-
 }

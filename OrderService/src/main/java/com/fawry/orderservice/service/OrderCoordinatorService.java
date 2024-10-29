@@ -57,15 +57,6 @@ public abstract class OrderCoordinatorService {
         }
     }
 
-
-    public abstract void depositAmountToMerchant(@NotNull Order order);
-
-    public abstract void withdrawAmountFromCustomer(@NotNull Order order);
-
-    public abstract void consumeStock(@NotNull Order order);
-
-    public abstract void consumeCoupon(@NotNull Order order);
-
     public void releaseCoupon(@NotNull Order order) {
         couponService.unconsumeCoupon(order.getTransactionId());
     }
@@ -77,4 +68,12 @@ public abstract class OrderCoordinatorService {
     public void refundCustomer(@NotNull Order order) {
         bankService.refund(order.getCustomerTransactionId());
     }
+
+    public abstract void depositAmountToMerchant(@NotNull Order order);
+
+    public abstract void withdrawAmountFromCustomer(@NotNull Order order);
+
+    public abstract void consumeStock(@NotNull Order order);
+
+    public abstract void consumeCoupon(@NotNull Order order);
 }

@@ -47,8 +47,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void unconsumeCoupon(String transactionId) {
         try {
-//            String baseUrl = BASE_URL.concat("/unconsume/").concat(transactionId);
-            String baseUrl = "http://localhost:8080/coupon/unconsume/"+transactionId;
+            String baseUrl = BASE_URL.concat("/unconsume/").concat(transactionId);
             restTemplate.postForEntity(baseUrl, null, CouponResponse.class);
         } catch (HttpClientErrorException e) {
             String message = "No Coupon Transaction '%s'!".formatted(transactionId);

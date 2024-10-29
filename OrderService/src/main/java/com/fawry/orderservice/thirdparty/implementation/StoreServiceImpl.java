@@ -41,12 +41,11 @@ public class StoreServiceImpl implements StoreService {
     public void releaseStock(List<OrderItem> orderItems) {
         List<StockRequest> stockRequestList = mapToStockRequest(orderItems);
         try {
-//            restTemplate.postForEntity(BASE_URL.concat("/release"), stockRequestList, Void.class);
-            restTemplate.postForEntity("http://localhost:8080/stocks/unconsume", stockRequestList, Void.class);
+            restTemplate.postForEntity(BASE_URL.concat("/unconsume"), stockRequestList, Void.class);
         } catch (HttpClientErrorException e) {
             log.error("Unable to release Consumed products");
             stockRequestList.forEach(item -> log.error("Product SKU: {}, Quantity: {}", item.getProductSku(), item.getQuantity()));
-            throw new OutOfStockException("One or more products are out of stock.");
+            throw new OutOfStockException("One or more Sku are invalid : " + e.getMessage());
         }
     }
 }
