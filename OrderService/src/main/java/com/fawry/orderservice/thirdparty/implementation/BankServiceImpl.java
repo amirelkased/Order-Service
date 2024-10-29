@@ -1,6 +1,7 @@
 package com.fawry.orderservice.thirdparty.implementation;
 
 import com.fawry.orderservice.exception.PaymentFailedException;
+import com.fawry.orderservice.exception.RefundFailedException;
 import com.fawry.orderservice.model.dto.TransactionRequest;
 import com.fawry.orderservice.model.dto.TransactionResponse;
 import com.fawry.orderservice.thirdparty.BankService;
@@ -18,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 public class BankServiceImpl implements BankService {
     @Value("${bank.api.url}")
     private String BASE_URL;
+    @Value("${order.tax}")
+    private double tax;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
@@ -59,10 +62,21 @@ public class BankServiceImpl implements BankService {
         }
     }
 
+    @Override
+    public void refund(String transactionId) {
+        try {
+            restTemplate.postForEntity(BASE_URL.concat("/refund/").concat(transactionId), null, Void.class);
+        } catch (HttpClientErrorException e) {
+            log.error("Unable to refund transactoion with id {}", transactionId);
+            throw new RefundFailedException("Refund Transaction with id %s Failed!".formatted(transactionId));
+        }
+    }
+
     private TransactionRequest prepareRequestPayload(Long customerId, double amount) {
         return TransactionRequest.builder()
                 .userId(customerId)
-                .amount(amount)
+                .amount(amount + tax)
                 .build();
     }
+
 }

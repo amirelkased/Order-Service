@@ -5,10 +5,7 @@ import com.fawry.orderservice.model.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -64,6 +61,13 @@ public class MockRestController {
 //        );
     }
 
+    @PostMapping("api/v1/banking/transaction/refund/{id}")
+    public ResponseEntity<Void> refundTransaction(@PathVariable("id") String transactionId) {
+        // happy
+        log.info("Bank Service: Refunding Transaction id {}", transactionId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("api/v1/products/skus")
     public ResponseEntity<ProductsWithPriceResponse> getProductsAlongPrices(@RequestBody List<String> skus) {
         log.info("Request Skus and return along prices {}", skus);
@@ -104,9 +108,39 @@ public class MockRestController {
 //        );
     }
 
+    @PostMapping("coupon/unconsume/{id}")
+    public ResponseEntity<CouponResponse> unconsumeCoupon(@PathVariable String id) {
+        log.info("Mock Coupon unconsume api with trans id {}",id);
+        // happy
+        return ResponseEntity.ok(
+                CouponResponse.builder()
+                        .status("success")
+                        .message("MOCKING: unconsume Coupon valid")
+                        .amount(0)
+                        .build()
+        );
+        // sad
+//        CouponResponse coupon = new CouponResponse();
+//        coupon.setStatus("failed");
+//        coupon.setMessage("coupon is invalidate");
+//        return ResponseEntity.badRequest().body(
+//                coupon
+//        );
+    }
+
+
     @PostMapping("stocks/consume")
     public ResponseEntity<Void> consumeProducts(@RequestBody List<StockRequest> orderItems) {
         log.info("Mocking consuming order's products -> {}", orderItems);
+        // happy
+        return ResponseEntity.ok().build();
+        //sad
+//        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("stocks/unconsume")
+    public ResponseEntity<Void> unconsumeProducts(@RequestBody List<StockRequest> orderItems) {
+        log.info("Mocking unconsuming order's products -> {}", orderItems);
         // happy
         return ResponseEntity.ok().build();
         //sad

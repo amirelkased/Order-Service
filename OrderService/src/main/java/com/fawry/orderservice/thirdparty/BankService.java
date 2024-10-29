@@ -8,4 +8,6 @@ public interface BankService {
     TransactionResponse withdraw(Long customerId, double amount);
 
     TransactionResponse deposit(Long merchantId, double amount);
+
+    void refund(String customerTransactionId);
 }

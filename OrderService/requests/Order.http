@@ -13,7 +13,8 @@ Content-Type: application/json
     {
       "productSku": "MVCFH27F",
       "quantity": 20
-    },{
+    },
+    {
       "productSku": "9EN8WLT2",
       "quantity": 30
     }

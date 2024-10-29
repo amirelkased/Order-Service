@@ -23,6 +23,10 @@ public class Order extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(updatable = false, unique = true, nullable = false)
+    private String transactionId;
+
     @Column(updatable = false)
     private String couponCode;
     private boolean couponApplied;

@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 public class CouponRequest {
     private String couponCode;
     private double amount;
+    private Long customerId;
+    private String transactionId;
 }
 

@@ -63,13 +63,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage, request);
     }
 
-    @ExceptionHandler(CouponInvalidException.class)
-    public ResponseEntity<ErrorResponse> handleCouponInvalidException(@NotNull CouponInvalidException ex, HttpServletRequest request) {
+    @ExceptionHandler({TransactionIdInvalidException.class, CouponInvalidException.class})
+    public ResponseEntity<ErrorResponse> handleCouponInvalidException(@NotNull RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(OutOfStockException.class)
-    public ResponseEntity<ErrorResponse> handleOutOfStockException(@NotNull OutOfStockException ex, HttpServletRequest request) {
+    @ExceptionHandler({OutOfStockException.class, StockReleaseException.class})
+    public ResponseEntity<ErrorResponse> handleOutOfStockException(@NotNull RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
@@ -78,13 +78,18 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
-    @ExceptionHandler(PaymentFailedException.class)
-    public ResponseEntity<ErrorResponse> handlePaymentFailedException(@NotNull PaymentFailedException ex, HttpServletRequest request) {
+    @ExceptionHandler({PaymentFailedException.class, RefundFailedException.class})
+    public ResponseEntity<ErrorResponse> handlePaymentFailedException(@NotNull RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<ErrorResponse> handlePaymentFailedException(@NotNull HttpClientErrorException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(OrderFailedException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentFailedException(@NotNull OrderFailedException ex, HttpServletRequest request) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 

@@ -37,7 +37,7 @@ public class OrderItemsMapper {
                 .toList();
     }
 
-    public static List<StockRequest> mapToStockRequest(List<OrderItem> orderItems){
+    public static List<StockRequest> mapToStockRequest(List<OrderItem> orderItems) {
         return orderItems.stream()
                 .map(item -> StockRequest.builder()
                         .productSku(item.getProductSku())
