@@ -59,7 +59,7 @@ public class OrderCoordinatorServiceImpl extends OrderCoordinatorService {
 
     @Override
     public void consumeCoupon(@NotNull Order order) {
-        if (order.getCouponCode() != null && !order.getCouponCode().isEmpty()) {
+        if (order.getCouponCode() != null && !order.getCouponCode().isBlank()) {
             CouponResponse couponResponse = couponService.consumeCoupon(
                     order.getCouponCode(),
                     order.getTotalAmount(),

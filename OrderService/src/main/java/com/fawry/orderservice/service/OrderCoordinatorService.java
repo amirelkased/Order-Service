@@ -58,7 +58,9 @@ public abstract class OrderCoordinatorService {
     }
 
     public void releaseCoupon(@NotNull Order order) {
-        couponService.unconsumeCoupon(order.getTransactionId());
+        if(order.isCouponApplied() && !order.getCouponCode().isBlank()){
+            couponService.unconsumeCoupon(order.getTransactionId());
+        }
     }
 
     public void restockItems(@NotNull Order order) {
